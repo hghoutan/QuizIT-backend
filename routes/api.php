@@ -3,11 +3,12 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\MailController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PasswordResetController;
 
-Route::post('/forget-password', [AuthController::class, 'forgetPassword']);
 
-Route::post('/resetPassword', [MailController::class, 'send']);
-Route::get('/resetPassword', [MailController::class, 'send']);
+
+Route::post('/send-reset-password-link', [PasswordResetController::class, 'sendResetPasswordLink']);
+Route::post('/reset-password/{token}', [PasswordResetController::class, 'resetPassword']);
 
 Route::group(['middleware' => 'api'], function () {
     Route::post('/register', [AuthController::class, 'register']);
