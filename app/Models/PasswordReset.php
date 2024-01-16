@@ -8,18 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class PasswordReset extends Model
 {
     use HasFactory;
-
-    public $table = 'password_resets';
-
+    const UPDATED_AT = null;
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'email',
-        'token',
-        'created_at'
+        'token'
     ];
-    
-    // If you want to include the 'updated_at' timestamp
-    // public $timestamps = true;
-    
-    // If you don't want to include the 'updated_at' timestamp
-    // public $timestamps = false;
 }

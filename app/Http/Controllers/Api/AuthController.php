@@ -92,43 +92,4 @@ class AuthController extends Controller
         return response()->json(['message' => 'Successfully logged out']);
     }
 
-    public function forgetPassword(Request $request)
-    {
-        try {
-            $user = User::where('email', $request->email)->first();
-
-            if (!$user) {
-                return response()->json(['success' => false, 'msg' => 'User not found']);
-            }
-
-            $token = Str::random(40);
-            $domain = URL::to('/');
-            $url = $domain.'/reset-password?token='.$token;
-
-            $data = [
-                'url' => $url,
-                'email' => $request->email,
-                'title' => 'Password Reset',
-                'body' => 'Please click on below link to reset your password.',
-            ];
-
-            Mail::send('forgetPasswordMail', ['data' => $data], function ($message) use ($data) {
-                $message->to($data['email'])->subject($data['title']);
-            });
-
-            $datetime = Carbon::now()->format('Y-m-d H:i:s');
-            PasswordReset::updateOrCreate(
-                ['email' => $request->email],
-                [
-                    'email' => $request->email,
-                    'token' => $token,
-                    'created_at' => $datetime,
-                ]
-            );
-
-            return response()->json(['success' => true, 'msg' => 'Please check your mail to reset your password.']);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'msg' => $e->getMessage()]);
-        }
-    }
 }
