@@ -13,9 +13,9 @@
     <h3>Hi.. <span style="color:cornflowerblue">{{ $userName }}</span></h3>
     <h4>You have requested to reset your password</h4>
     <hr>
-    <h1 style="font-weight: bold;color:cornflowerblue "><a
-            href="http://127.0.0.1:8000/api/reset-password/{{ $token }}">Click Here to
-            Reset Password</a></h1>
+    <h1 style="font-weight: bold;color:cornflowerblue ">
+        <a href="{{ $resetLink }}">Click Here to Reset Password</a>
+    </h1>
     <br><br>
     <span style="">Team <span style="font-weight: bold;color:cornflowerblue">Auth-api</span></span>
 </body>
