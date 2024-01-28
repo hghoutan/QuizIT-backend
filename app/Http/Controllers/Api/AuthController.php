@@ -21,39 +21,38 @@ class AuthController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api', ['except' => ['login', 'register', 'logout']]);
-
     }
 
     public function register(Request $request)
-{
-    $validator = Validator::make($request->all(), [
-        'name' => 'required|unique:users',
-        'email' => 'required|email|unique:users',
-        'password' => 'required|min:8',
-    ]);
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|unique:users',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:8',
+        ]);
 
-    if ($validator->fails()) {
-        return response()->json(['error' => $validator->errors()], 400);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+        ]);
+
+        // Generate a token for the registered user
+        $token = auth('api')->attempt(['email' => $request->email, 'password' => $request->password]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'User registered successfully',
+            'user' => $user,
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth('api')->factory()->getTTL() * 60,
+        ]);
     }
-
-    $user = User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'password' => bcrypt($request->password),
-    ]);
-
-    // Generate a token for the registered user
-    $token = auth('api')->attempt(['email' => $request->email, 'password' => $request->password]);
-
-    return response()->json([
-        'status' => 'success',
-        'message' => 'User registered successfully',
-        'user' => $user,
-        'access_token' => $token,
-        'token_type' => 'bearer',
-        'expires_in' => auth('api')->factory()->getTTL() * 60,
-    ]);
-}
 
 
 public function login(Request $request)
@@ -119,6 +118,4 @@ public function createNewToken($token)
 
         return response()->json(['message' => 'Password changed successfully']);
     }
-
 }
-
