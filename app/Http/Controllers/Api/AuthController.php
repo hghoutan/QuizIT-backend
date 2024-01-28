@@ -55,33 +55,34 @@ class AuthController extends Controller
     }
 
 
-    public function login(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required|min:8',
-        ]);
+public function login(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'email' => 'required|email',
+        'password' => 'required|min:8',
+    ]);
 
-        if ($validator->fails()) {
-            return response()->json(['error' => 'Invalid input'], 400);
-        }
-
-        if (!$token = auth('api')->attempt($validator->validated())) {
-            return response()->json(['error' => 'Invalid credentials'], 401);
-        }
-
-        return $this->createNewToken($token);
+    if ($validator->fails()) {
+        return response()->json(['error' => 'Invalid input'], 400);
     }
 
-    public function createNewToken($token)
-    {
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth('api')->factory()->getTTL() * 60,
-            'user' => auth('api')->user(),
-        ]);
+    if (!$token = auth('api')->attempt($validator->validated())) {
+        return response()->json(['error' => 'Invalid credentials'], 401);
     }
+
+    return $this->createNewToken($token);
+}
+
+public function createNewToken($token)
+{
+    return response()->json([
+        'access_token' => $token,
+        'token_type' => 'bearer',
+        'expires_in' => auth('api')->factory()->getTTL() * 60,
+        'user' => auth('api')->user(),
+    ]);
+}
+
 
     public function profile()
     {
